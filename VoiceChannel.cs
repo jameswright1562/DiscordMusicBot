@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,21 +15,23 @@ namespace DiscordMusicBot
 
     public class VoiceChannel
     {
-        public VoiceChannel(DiscordSocketClient client, IGuildUser user, string channelId)
+        public VoiceChannel(DiscordSocketClient client, IGuild guild, ulong channelId)
         {
             Client = client;
-            User = user;
-            Channel = GetChannel(user.Guild, channelId).Result;
-            AudioClient = Channel.ConnectAsync().Result;
+            Channel = GetChannel(guild, channelId).Result;
+            AudioClient = Channel.ConnectAsync().Result; 
         }
         public IAudioClient AudioClient { get; private set; }
         public IVoiceChannel Channel { get; private set; }
         public DiscordSocketClient Client { get; private set; }
-        public IGuildUser User { get; private set; }
 
-        public async Task<IVoiceChannel> GetChannel(IGuild guild, string channelId)
+        public async Task<IVoiceChannel> GetChannel(IGuild guild, ulong channelId)
         {
-            return await guild.GetVoiceChannelAsync(Convert.ToUInt64(channelId));
+            return await guild.GetVoiceChannelAsync(channelId, CacheMode.AllowDownload, new RequestOptions
+            {
+                RetryMode = RetryMode.AlwaysRetry,
+                Timeout = 10000
+            });
         }
 
         public async Task SendAsync(string path)

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DiscordMusicBot
 {
-    public class Command
+    public class Settings
     {
-        public string RegexPattern { get; set; }
+        public string BotToken { get; set; }
+        public string BotPrefix { get; set; }
     }
 }
